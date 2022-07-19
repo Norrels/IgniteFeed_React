@@ -1,134 +1,137 @@
-import { format, formatDistanceToNow } from 'date-fns';
-import ptBR from 'date-fns/locale/pt-BR'
-import { Comment } from './Comment';
-import { Avatar } from './Avatar';
+import { format, formatDistanceToNow } from "date-fns";
+import ptBR from "date-fns/locale/pt-BR";
+import { Comment } from "./Comment";
+import { Avatar } from "./Avatar";
 
-import styles from './Post.module.css';
-import { ChangeEvent, FormEvent, InvalidEvent, useState } from 'react';
+import styles from "./Post.module.css";
+import { ChangeEvent, FormEvent, InvalidEvent, useState } from "react";
 
 interface Author {
-    name: string;
-    role: string;
-    avatarUrl: string;
+  name: string;
+  role: string;
+  avatarUrl: string;
 }
 
-interface Content{
-    type: 'paragraph' | 'link';
-    content: string;
+interface Content {
+  type: "paragraph" | "link" | string;
+  content: string;
 }
 
-interface PostProps{
-    author: Author;
-    publishedAt: Date;
-    content: Content[];
+interface PostProps {
+  author: Author;
+  publishedAt: Date;
+  content: Content[];
 }
 
-export function Post({ author, publishedAt, content } : PostProps) {
-    //lembre-se que a variavel não pode ser alterado somente por meio do método
-    const [comments, setComments] = useState([
-        'Post muito bacana, hein?'
-    ])
+export function Post({ author, publishedAt, content }: PostProps) {
+  //lembre-se que a variavel não pode ser alterado somente por meio do método
+  const [comments, setComments] = useState(["Post muito bacana, hein?"]);
 
-    const [newCommentText, setNewCommentText] = useState('')
+  const [newCommentText, setNewCommentText] = useState("");
 
-    const publishedDateFormatted = format(publishedAt, "d 'de' LLLL 'às' HH:mm'h'", {
-        locale: ptBR,
-    })
-
-    const publishedDateRelativeToNow = formatDistanceToNow(publishedAt, {
-        locale: ptBR,
-        addSuffix: true,
-    })
-    //Sempre for uma ação que o usuario realiza utilizar Handle no método
-    function HandleCreateNewComment(event : FormEvent) {
-        event.preventDefault()
-        //imutabilidade = não passar só o valor que voce quer inserir   
-        //mas sim o novo valor 
-        setComments([...comments, newCommentText])
-        setNewCommentText('')
+  const publishedDateFormatted = format(
+    publishedAt,
+    "d 'de' LLLL 'às' HH:mm'h'",
+    {
+      locale: ptBR,
     }
+  );
 
-    function handleNewCommentChange(event : ChangeEvent<HTMLTextAreaElement>) {
-        event.target.setCustomValidity('')
-        setNewCommentText(event.target.value);
-    }
+  const publishedDateRelativeToNow = formatDistanceToNow(publishedAt, {
+    locale: ptBR,
+    addSuffix: true,
+  });
+  //Sempre for uma ação que o usuario realiza utilizar Handle no método
+  function HandleCreateNewComment(event: FormEvent) {
+    event.preventDefault();
+    //imutabilidade = não passar só o valor que voce quer inserir
+    //mas sim o novo valor
+    setComments([...comments, newCommentText]);
+    setNewCommentText("");
+  }
 
-    function deleteComment(commentToDelete : string) {
-        const commentsWithoutDeletedOne = comments.filter(commente => {
-            return commente != commentToDelete
-        })
-        setComments(commentsWithoutDeletedOne)
-    }
+  function handleNewCommentChange(event: ChangeEvent<HTMLTextAreaElement>) {
+    event.target.setCustomValidity("");
+    setNewCommentText(event.target.value);
+  }
 
-    function handleNewCommentInvalid(event : InvalidEvent<HTMLTextAreaElement>) {
-        //Método que exibe uma mensagem personalizada quando o input é invalido
-        event.target.setCustomValidity('Esse campo é obrigatório')
-    }
-    
-    const isNewCommentEmpty = newCommentText.length == 0
+  function deleteComment(commentToDelete: string) {
+    const commentsWithoutDeletedOne = comments.filter((commente) => {
+      return commente != commentToDelete;
+    });
+    setComments(commentsWithoutDeletedOne);
+  }
 
-    return (
-        <article className={styles.post}>
-            <header>
-                <div className={styles.author}>
-                    <Avatar
-                        src={author.avatarUrl}
-                    />
-                    <div className={styles.authorInfo}>
-                        <strong>{author.name}</strong>
-                        <span>{author.role}</span>
+  function handleNewCommentInvalid(event: InvalidEvent<HTMLTextAreaElement>) {
+    //Método que exibe uma mensagem personalizada quando o input é invalido
+    event.target.setCustomValidity("Esse campo é obrigatório");
+  }
 
-                    </div>
-                </div>
+  const isNewCommentEmpty = newCommentText.length == 0;
 
-                <time title={publishedDateFormatted} dateTime={publishedAt.toISOString()}>
-                    {publishedDateRelativeToNow}
-                </time>
-            </header>
+  return (
+    <article className={styles.post}>
+      <header>
+        <div className={styles.author}>
+          <Avatar src={author.avatarUrl} />
+          <div className={styles.authorInfo}>
+            <strong>{author.name}</strong>
+            <span>{author.role}</span>
+          </div>
+        </div>
 
-            <div className={styles.content}>
-                {content.map(item => {
-                    if (item.type == 'paragraph') {
-                        return <p key={item.content}>{item.content}</p>;
-                    } else if (item.type == 'link') {
-                        return <p key={item.content}><a href="#">{item.content}</a></p>
-                    }
-                })}
-            </div>
-            <form onSubmit={HandleCreateNewComment} className={styles.commentForm}>
-                <strong>Deixe seu Feedback</strong>
+        <time
+          title={publishedDateFormatted}
+          dateTime={publishedAt.toISOString()}
+        >
+          {publishedDateRelativeToNow}
+        </time>
+      </header>
 
-                <textarea
-                    name='comment'
-                    placeholder='Deixe um comentário'
-                    //monitora toda vez que houver uma mundança
-                    onChange={handleNewCommentChange}
-                    value={newCommentText}
-                    onInvalid={handleNewCommentInvalid}
-                    required
-                />
+      <div className={styles.content}>
+        {content.map((item) => {
+          if (item.type == "paragraph") {
+            return <p key={item.content}>{item.content}</p>;
+          } else if (item.type == "link") {
+            return (
+              <p key={item.content}>
+                <a href="#">{item.content}</a>
+              </p>
+            );
+          }
+        })}
+      </div>
+      <form onSubmit={HandleCreateNewComment} className={styles.commentForm}>
+        <strong>Deixe seu Feedback</strong>
 
-                <footer>
-                    <button
-                        type='submit'
-                        disabled={isNewCommentEmpty}>
-                        Publicar
-                    </button>
-                </footer>
+        <textarea
+          name="comment"
+          placeholder="Deixe um comentário"
+          //monitora toda vez que houver uma mundança
+          onChange={handleNewCommentChange}
+          value={newCommentText}
+          onInvalid={handleNewCommentInvalid}
+          required
+        />
 
-            </form>
+        <footer>
+          <button type="submit" disabled={isNewCommentEmpty}>
+            Publicar
+          </button>
+        </footer>
+      </form>
 
-            <div className={styles.commentList}>
-                {comments.map(comment => {
-                    return (
-                        <Comment
-                            key={comment}
-                            content={comment}
-                            WhenDeleteComment={deleteComment}
-                        />
-                    )
-                })}
-            </div>
-        </article>
-    )
+      <div className={styles.commentList}>
+        {comments.map((comment) => {
+          return (
+            <Comment
+              key={comment}
+              content={comment}
+              WhenDeleteComment={deleteComment}
+            />
+          );
+        })}
+      </div>
+    </article>
+  );
 }
