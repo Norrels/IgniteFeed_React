@@ -3,9 +3,23 @@ import { Post } from "./components/Post"
 
 import './global.css';
 import styles from './App.module.css';
-import { Sidebar } from "./components/sidebar";
+import { Sidebar } from "./components/Sidebar";
 
-const posts = [
+interface PostProps{
+  id: number;
+  author: {
+      avatarUrl: string;
+      name: string;
+      role: string;
+  };
+  content: {
+      type: 'paragraph' | 'link';
+      content: string;
+  }[];
+  publishedAt: Date;
+}
+
+const posts: PostProps[] = [
   {
     id: 1,
     author: {
