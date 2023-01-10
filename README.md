@@ -5,7 +5,7 @@ A ideia principal era desenvolver uma timeline do qual seria possivel adicionar 
 ### Conceitos desenvolvidos
 - ReactJS
 - Estados do ReactJS
-- Compenitização
+- Componentização
 - Css Module
 
 ### Acesse o website :sweat_smile:
